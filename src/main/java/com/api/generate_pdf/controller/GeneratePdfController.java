@@ -1,5 +1,6 @@
 package com.api.generate_pdf.controller;
 import com.api.generate_pdf.DTOs.ConfigurationsDocument;
+import com.api.generate_pdf.exceptions.FileRequiredException;
 import com.api.generate_pdf.mapping.ConvertMultipartfileTo;
 import com.api.generate_pdf.service.SelectTemplate;
 import com.api.generate_pdf.service.StartDocument;
@@ -22,10 +23,13 @@ public class GeneratePdfController {
 
     @PostMapping
     public ResponseEntity<Resource> generatePdf(
-            @RequestParam("file") MultipartFile multipartFile,
+            @RequestParam(value = "file", required = false) MultipartFile multipartFile,
             @RequestParam("title") String title,
             @RequestParam("rotate") String rotate
     ) throws IOException {
+        if (multipartFile == null || multipartFile.isEmpty()){
+            throw new FileRequiredException();
+        }
         //Arquivo
         File file = ConvertMultipartfileTo.convertMultipartFileToFile(multipartFile);
 
